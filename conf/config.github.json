@@ -1,0 +1,54 @@
+{
+  "env": "local",
+  "debug_mode": true,
+  "rmq": {
+    "host": "127.0.0.1",
+    "port": "5672",
+    "user": "user",
+    "password": "pass",
+    "queues": {
+      "generate_in": {
+        "exchange_name": "",
+        "queue_name": "pass.generate_in",
+        "queue_len": 100,
+        "errors_threshold": 100,
+        "prefetch_count": 1,
+        "durable": true,
+        "exclusive": false
+      },
+      "generate_out": {
+        "exchange_name": "pass.generate_out",
+        "queue_name": "",
+        "queue_len": 100,
+        "errors_threshold": 100,
+        "prefetch_count": 1,
+        "durable": true,
+        "exclusive": false
+      },
+      "validate_in": {
+        "exchange_name": "",
+        "queue_name": "pass.validate_in",
+        "queue_len": 100,
+        "errors_threshold": 100,
+        "prefetch_count": 1,
+        "durable": true,
+        "exclusive": false
+      },
+      "validate_out": {
+        "exchange_name": "pass.validate_out",
+        "queue_name": "",
+        "queue_len": 100,
+        "errors_threshold": 100,
+        "prefetch_count": 1,
+        "durable": true,
+        "exclusive": false
+      }
+    }
+  },
+  "password": {
+    "time": 1,
+    "memory": 65536,
+    "threads": 4,
+    "key_len": 32
+  }
+}
