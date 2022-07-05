@@ -50,10 +50,10 @@ jobs:
           go install github.com/tinylib/msgp
           make gen
 
-  #      - name: Test
-  #        run: make test
-  #        env:
-  #          CFG_PATH: ./conf/config.github.json
+      - name: Test
+        run: make test
+        env:
+          CFG_PATH: ./conf/config.github.json
   build:
     runs-on: ubuntu-latest
 
