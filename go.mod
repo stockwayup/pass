@@ -1,13 +1,15 @@
 module github.com/stockwayup/pass
 
-go 1.18
+go 1.19
+
+replace github.com/isayme/go-amqp-reconnect v0.0.0-20210303120416-fc811b0bcda2 => github.com/soulgarden/go-amqp-reconnect v0.0.0-20221004062723-736d34abd6d3
 
 require (
 	github.com/isayme/go-amqp-reconnect v0.0.0-20210303120416-fc811b0bcda2
 	github.com/jinzhu/configor v1.2.1
 	github.com/rs/zerolog v1.27.0
 	github.com/satori/go.uuid v1.2.0
-	github.com/soulgarden/rmq-pubsub v0.0.1
+	github.com/soulgarden/rmq-pubsub v0.0.3
 	github.com/spf13/cobra v1.5.0
 	github.com/streadway/amqp v1.0.0
 	github.com/tinylib/msgp v1.1.6

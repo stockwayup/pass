@@ -12,20 +12,24 @@ import (
 
 type Generator struct {
 	passwordSvc *Password
-	pub         *pubsub.Pub
+	pub         pubsub.Pub
 }
 
-func NewGenerator(passwordSvc *Password, pub *pubsub.Pub) *Generator {
+func NewGenerator(passwordSvc *Password, pub pubsub.Pub) *Generator {
 	return &Generator{passwordSvc: passwordSvc, pub: pub}
 }
 
 func (s *Generator) Process(
 	ctx context.Context,
 	delivery <-chan amqp.Delivery,
-) {
+) error {
 	for {
 		select {
-		case msg := <-delivery:
+		case msg, ok := <-delivery:
+			if !ok {
+				return dictionary.ErrDeliveryChannelClosed
+			}
+
 			ctx := zerolog.Ctx(ctx).With().
 				Str("id", msg.MessageId).
 				Logger().
@@ -41,7 +45,7 @@ func (s *Generator) Process(
 
 				s.pub.Publish(event.NewAMQPGeneratedMsg(msg.MessageId, dictionary.TypeGeneratedError, []byte{}))
 
-				return
+				return err
 			}
 
 			hash, salt, err := s.passwordSvc.HashPassword(ctx, in.Password)
@@ -50,7 +54,7 @@ func (s *Generator) Process(
 
 				s.pub.Publish(event.NewAMQPGeneratedMsg(msg.MessageId, dictionary.TypeGeneratedError, []byte{}))
 
-				return
+				return err
 			}
 
 			out := event.Generated{Hash: hash, Salt: salt}
@@ -61,13 +65,13 @@ func (s *Generator) Process(
 
 				s.pub.Publish(event.NewAMQPGeneratedMsg(msg.MessageId, dictionary.TypeGeneratedError, []byte{}))
 
-				return
+				return err
 			}
 
 			s.pub.Publish(event.NewAMQPGeneratedMsg(msg.MessageId, dictionary.TypeGenerated, body))
 
 		case <-ctx.Done():
-			return
+			return ctx.Err()
 		}
 	}
 }

@@ -76,6 +76,6 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.1
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.2
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest,mode=max

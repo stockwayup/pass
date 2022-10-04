@@ -12,20 +12,24 @@ import (
 
 type Validator struct {
 	passwordSvc *Password
-	pub         *pubsub.Pub
+	pub         pubsub.Pub
 }
 
-func NewValidator(passwordSvc *Password, pub *pubsub.Pub) *Validator {
+func NewValidator(passwordSvc *Password, pub pubsub.Pub) *Validator {
 	return &Validator{passwordSvc: passwordSvc, pub: pub}
 }
 
 func (s *Validator) Process(
 	ctx context.Context,
 	delivery <-chan amqp.Delivery,
-) {
+) error {
 	for {
 		select {
-		case msg := <-delivery:
+		case msg, ok := <-delivery:
+			if !ok {
+				return dictionary.ErrDeliveryChannelClosed
+			}
+
 			ctx := zerolog.Ctx(ctx).With().
 				Str("id", msg.MessageId).
 				Logger().
@@ -41,7 +45,7 @@ func (s *Validator) Process(
 
 				s.pub.Publish(event.NewAMQPValidatedMsg(msg.MessageId, dictionary.TypeValidatedError, []byte{}))
 
-				return
+				return err
 			}
 
 			isValid, err := s.passwordSvc.IsValid(in.Input, in.Password, in.Salt)
@@ -50,7 +54,7 @@ func (s *Validator) Process(
 
 				s.pub.Publish(event.NewAMQPValidatedMsg(msg.MessageId, dictionary.TypeValidatedError, []byte{}))
 
-				return
+				return err
 			}
 
 			out := event.Validated{IsValid: isValid}
@@ -61,13 +65,13 @@ func (s *Validator) Process(
 
 				s.pub.Publish(event.NewAMQPValidatedMsg(msg.MessageId, dictionary.TypeValidatedError, []byte{}))
 
-				return
+				return err
 			}
 
 			s.pub.Publish(event.NewAMQPValidatedMsg(msg.MessageId, dictionary.TypeValidated, body))
 
 		case <-ctx.Done():
-			return
+			return ctx.Err()
 		}
 	}
 }
