@@ -10,8 +10,8 @@ import (
 //go:generate msgp
 
 type Generated struct {
-	Hash []byte `msgp:"hash"`
-	Salt []byte `msgp:"salt"`
+	Hash []byte `msg:"hash"`
+	Salt []byte `msg:"salt"`
 }
 
 func NewAMQPGeneratedMsg(id string, t string, body []byte) amqp.Publishing {

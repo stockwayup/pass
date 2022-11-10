@@ -3,7 +3,7 @@ package event
 //go:generate msgp
 
 type Validate struct {
-	Input    []byte `msgp:"input"`
-	Password []byte `msgp:"password"`
-	Salt     []byte `msgp:"salt"`
+	Input    []byte `msg:"input"`
+	Password []byte `msg:"password"`
+	Salt     []byte `msg:"salt"`
 }

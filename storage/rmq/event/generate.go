@@ -11,7 +11,7 @@ import (
 //go:generate msgp
 
 type Generate struct {
-	Password []byte `msgp:"password"`
+	Password []byte `msg:"password"`
 }
 
 func NewGenerateMsg(e Generate) (p amqp.Publishing, _ error) {

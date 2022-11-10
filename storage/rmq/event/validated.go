@@ -10,7 +10,7 @@ import (
 //go:generate msgp
 
 type Validated struct {
-	IsValid bool `msgp:"is_valid"`
+	IsValid bool `msg:"is_valid"`
 }
 
 func NewAMQPValidatedMsg(id string, t string, body []byte) amqp.Publishing {

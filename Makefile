@@ -12,5 +12,5 @@ test:
 	CONFIGOR_ENV=local ROOT_DIR=${PWD} go test -failfast ./...
 
 build:
-	docker build . -t soulgarden/swup:pass-0.0.2 --platform linux/amd64
-	docker push soulgarden/swup:pass-0.0.2
+	docker build . -t soulgarden/swup:pass-0.0.3 --platform linux/amd64
+	docker push soulgarden/swup:pass-0.0.3
