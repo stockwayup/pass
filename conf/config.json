@@ -48,7 +48,7 @@
   "password": {
     "time": 1,
     "memory": 65536,
-    "threads": 4,
+    "threads": 1,
     "key_len": 32
   }
 }
