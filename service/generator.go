@@ -3,11 +3,11 @@ package service
 import (
 	"context"
 
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	pubsub "github.com/soulgarden/rmq-pubsub"
 	"github.com/stockwayup/pass/dictionary"
 	"github.com/stockwayup/pass/storage/rmq/event"
-	"github.com/streadway/amqp"
 )
 
 type Generator struct {

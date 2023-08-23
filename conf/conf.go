@@ -12,12 +12,12 @@ import (
 type Config struct {
 	Env       string `json:"env" required:"true"`
 	DB        *DB
-	DebugMode bool `json:"debug_mode"  default:"false"`
+	DebugMode bool `default:"false" json:"debug_mode"`
 	RMQ       struct {
-		Host     string `json:"host"      required:"true"`
-		Port     string `json:"port"      default:"6379"`
-		User     string `json:"user"      default:"guest"`
-		Password string `json:"password"  default:"guest"`
+		Host     string `json:"host"     required:"true"`
+		Port     string `default:"6379"  json:"port"`
+		User     string `default:"guest" json:"user"`
+		Password string `default:"guest" json:"password"`
 
 		Queues struct {
 			GenerateIn  *pubsub.Cfg `json:"generate_in"`
@@ -27,10 +27,10 @@ type Config struct {
 		} `json:"queues"`
 	} `json:"rmq"`
 	Password struct {
-		Time    uint32 `json:"time"    default:"1"`
-		Memory  uint32 `json:"memory"  default:"65536"`
-		Threads uint8  `json:"threads" default:"4"`
-		KeyLen  uint32 `json:"key_len" default:"32"`
+		Time    uint32 `default:"1"     json:"time"`
+		Memory  uint32 `default:"65536" json:"memory"`
+		Threads uint8  `default:"4"     json:"threads"`
+		KeyLen  uint32 `default:"32"    json:"key_len"`
 	} `json:"password"`
 }
 
@@ -42,22 +42,22 @@ type DB struct {
 
 // Master config.
 type Master struct {
-	User     string `json:"user"      required:"true"`
-	Name     string `json:"name"      required:"true"`
-	Host     string `json:"host"      required:"true"`
-	Port     string `json:"port"      default:"5432"`
-	Password string `json:"password"  required:"true"`
-	PoolSize int    `json:"pool_size" default:"50"`
+	User     string `json:"user"     required:"true"`
+	Name     string `json:"name"     required:"true"`
+	Host     string `json:"host"     required:"true"`
+	Port     string `default:"5432"  json:"port"`
+	Password string `json:"password" required:"true"`
+	PoolSize int    `default:"50"    json:"pool_size"`
 }
 
 // Slave config.
 type Slave struct {
-	User     string `json:"user"      required:"true"`
-	Name     string `json:"name"      required:"true"`
-	Host     string `json:"host"      required:"true"`
-	Port     string `json:"port"      default:"5432"`
-	Password string `json:"password"  required:"true"`
-	PoolSize int    `json:"pool_size" default:"50"`
+	User     string `json:"user"     required:"true"`
+	Name     string `json:"name"     required:"true"`
+	Host     string `json:"host"     required:"true"`
+	Port     string `default:"5432"  json:"port"`
+	Password string `json:"password" required:"true"`
+	PoolSize int    `default:"50"    json:"pool_size"`
 }
 
 func New() *Config {

@@ -3,9 +3,9 @@ package event
 import (
 	"time"
 
+	amqp "github.com/rabbitmq/amqp091-go"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stockwayup/pass/dictionary"
-	"github.com/streadway/amqp"
 )
 
 //go:generate msgp

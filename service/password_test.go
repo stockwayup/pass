@@ -1,4 +1,4 @@
-package service // nolint: testpackage
+package service //nolint: testpackage
 
 import (
 	"context"
@@ -15,7 +15,7 @@ func TestPassword_HashPassword(t *testing.T) {
 	}
 
 	type args struct {
-		ctx      context.Context // nolint: containedctx
+		ctx      context.Context //nolint: containedctx
 		password []byte
 	}
 
@@ -33,10 +33,10 @@ func TestPassword_HashPassword(t *testing.T) {
 				cfg: &conf.Config{
 					Env: "test",
 					Password: struct {
-						Time    uint32 `json:"time"    default:"1"`
-						Memory  uint32 `json:"memory"  default:"65536"`
-						Threads uint8  `json:"threads" default:"4"`
-						KeyLen  uint32 `json:"key_len" default:"32"`
+						Time    uint32 `default:"1"     json:"time"`
+						Memory  uint32 `default:"65536" json:"memory"`
+						Threads uint8  `default:"4"     json:"threads"`
+						KeyLen  uint32 `default:"32"    json:"key_len"`
 					}{
 						Time:    1,
 						Memory:  65536,
@@ -101,10 +101,10 @@ func benchmarkPasswordHashPassword(b *testing.B, time, memory uint32) {
 			cfg: &conf.Config{
 				Env: "test",
 				Password: struct {
-					Time    uint32 `json:"time"    default:"1"`
-					Memory  uint32 `json:"memory"  default:"65536"`
-					Threads uint8  `json:"threads" default:"4"`
-					KeyLen  uint32 `json:"key_len" default:"32"`
+					Time    uint32 `default:"1"     json:"time"`
+					Memory  uint32 `default:"65536" json:"memory"`
+					Threads uint8  `default:"4"     json:"threads"`
+					KeyLen  uint32 `default:"32"    json:"key_len"`
 				}{
 					Time:    time,
 					Memory:  memory,
@@ -146,10 +146,10 @@ func benchmarkPasswordIsValid(b *testing.B, time, memory uint32) {
 			cfg: &conf.Config{
 				Env: "test",
 				Password: struct {
-					Time    uint32 `json:"time"    default:"1"`
-					Memory  uint32 `json:"memory"  default:"65536"`
-					Threads uint8  `json:"threads" default:"4"`
-					KeyLen  uint32 `json:"key_len" default:"32"`
+					Time    uint32 `default:"1"     json:"time"`
+					Memory  uint32 `default:"65536" json:"memory"`
+					Threads uint8  `default:"4"     json:"threads"`
+					KeyLen  uint32 `default:"32"    json:"key_len"`
 				}{
 					Time:    time,
 					Memory:  memory,
