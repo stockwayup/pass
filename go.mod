@@ -8,10 +8,10 @@ require (
 	github.com/rs/zerolog v1.32.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/soulgarden/go-amqp-reconnect/rabbitmq v0.0.2
-	github.com/soulgarden/rmq-pubsub v0.0.5
+	github.com/soulgarden/rmq-pubsub v0.0.6
 	github.com/spf13/cobra v1.8.0
 	go.uber.org/automaxprocs v1.5.3
-	golang.org/x/crypto v0.19.0
+	golang.org/x/crypto v0.20.0
 	golang.org/x/sync v0.6.0
 )
 
