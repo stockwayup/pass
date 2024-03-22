@@ -92,8 +92,8 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.7
+          push: false
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.8
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest,mode=max
 
@@ -104,6 +104,6 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.7
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.8
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest,mode=max
