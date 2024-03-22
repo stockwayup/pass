@@ -18,7 +18,7 @@ func NewGenerateConsumerCMD() *cobra.Command {
 		Use:   "generate_consume",
 		Short: "Run generate consumer",
 		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			cfg := conf.New()
 
 			logger := zerolog.New(os.Stdout).With().Caller().Logger()
