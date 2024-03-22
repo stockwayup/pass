@@ -16,5 +16,6 @@ issues:
         - varnamelen
         - nonamedreturns
         - funlen
+        - depguard
   enable-all: true
 

@@ -18,7 +18,7 @@ func NewValidateConsumerCMD() *cobra.Command {
 		Use:   "validate_consume",
 		Short: "Run validate consumer",
 		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			cfg := conf.New()
 
 			logger := zerolog.New(os.Stdout).With().Caller().Logger()
