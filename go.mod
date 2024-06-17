@@ -9,7 +9,7 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/soulgarden/go-amqp-reconnect/rabbitmq v0.0.2
 	github.com/soulgarden/rmq-pubsub v0.0.7
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	go.uber.org/automaxprocs v1.5.3
 	golang.org/x/crypto v0.24.0
 	golang.org/x/sync v0.7.0
