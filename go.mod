@@ -8,10 +8,10 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/soulgarden/go-amqp-reconnect/rabbitmq v0.0.2
-	github.com/soulgarden/rmq-pubsub v0.0.7
+	github.com/soulgarden/rmq-pubsub v0.0.8
 	github.com/spf13/cobra v1.8.1
-	go.uber.org/automaxprocs v1.5.3
-	golang.org/x/crypto v0.26.0
+	go.uber.org/automaxprocs v1.6.0
+	golang.org/x/crypto v0.28.0
 	golang.org/x/sync v0.8.0
 )
 
@@ -22,6 +22,6 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	golang.org/x/sys v0.24.0 // indirect
+	golang.org/x/sys v0.26.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
