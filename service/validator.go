@@ -2,26 +2,23 @@ package service
 
 import (
 	"context"
-
-	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/nats-io/nats.go"
 	"github.com/rs/zerolog"
-	pubsub "github.com/soulgarden/rmq-pubsub"
 	"github.com/stockwayup/pass/dictionary"
-	"github.com/stockwayup/pass/storage/rmq/event"
+	"github.com/stockwayup/pass/transport/event"
 )
 
 type Validator struct {
-	passwordSvc *Password
-	pub         pubsub.Pub
+	password *Password
 }
 
-func NewValidator(passwordSvc *Password, pub pubsub.Pub) *Validator {
-	return &Validator{passwordSvc: passwordSvc, pub: pub}
+func NewValidator(passwordSvc *Password) *Validator {
+	return &Validator{password: passwordSvc}
 }
 
 func (s *Validator) Process(
 	ctx context.Context,
-	delivery <-chan amqp.Delivery,
+	delivery <-chan *nats.Msg,
 ) error {
 	for {
 		select {
@@ -30,45 +27,55 @@ func (s *Validator) Process(
 				return dictionary.ErrDeliveryChannelClosed
 			}
 
-			ctx := zerolog.Ctx(ctx).With().
-				Str("id", msg.MessageId).
-				Logger().
-				WithContext(context.WithValue(ctx, dictionary.ID, msg.MessageId))
+			msgID := msg.Header.Get("id")
 
-			zerolog.Ctx(ctx).Err(msg.Ack(false)).Str("id", msg.MessageId).Msg("ack")
+			ctx := zerolog.Ctx(ctx).With().
+				Str("id", msgID).
+				Logger().
+				WithContext(context.WithValue(ctx, dictionary.ID, msgID))
 
 			in := event.Validate{}
 
-			_, err := in.UnmarshalMsg(msg.Body)
+			_, err := in.UnmarshalMsg(msg.Data)
 			if err != nil {
 				zerolog.Ctx(ctx).Err(err).Msg("unmarshal msg")
 
-				s.pub.Publish(event.NewAMQPValidatedMsg(msg.MessageId, dictionary.TypeValidatedError, []byte{}))
+				if err := msg.Respond([]byte(dictionary.TypeValidatedError)); err != nil {
+					zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
+
+					return err
+				}
 
 				return err
 			}
 
-			isValid, err := s.passwordSvc.IsValid(in.Input, in.Password, in.Salt)
+			isValid, err := s.password.IsValid(in.Input, in.Password, in.Salt)
 			if err != nil {
 				zerolog.Ctx(ctx).Err(err).Msg("is valid")
 
-				s.pub.Publish(event.NewAMQPValidatedMsg(msg.MessageId, dictionary.TypeValidatedError, []byte{}))
+				if err := msg.Respond([]byte(dictionary.TypeValidatedError)); err != nil {
+					zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
+
+					return err
+				}
+			}
+
+			resp := dictionary.TypeValid
+			if !isValid {
+				resp = dictionary.TypeInvalid
+			}
+
+			reply := nats.NewMsg("")
+
+			reply.Header.Set("id", msgID)
+			reply.Header.Set("type", dictionary.TypeGenerated)
+			reply.Data = []byte(resp)
+
+			if err := msg.RespondMsg(reply); err != nil {
+				zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 				return err
 			}
-
-			out := event.Validated{IsValid: isValid}
-
-			body, err := out.MarshalMsg(nil)
-			if err != nil {
-				zerolog.Ctx(ctx).Err(err).Msg("marshal msg")
-
-				s.pub.Publish(event.NewAMQPValidatedMsg(msg.MessageId, dictionary.TypeValidatedError, []byte{}))
-
-				return err
-			}
-
-			s.pub.Publish(event.NewAMQPValidatedMsg(msg.MessageId, dictionary.TypeValidated, body))
 
 		case <-ctx.Done():
 			return ctx.Err()

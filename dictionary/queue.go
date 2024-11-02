@@ -1,10 +1,9 @@
 package dictionary
 
 const (
-	QueueMessageContentType = "application/octet-stream"
-	TTL                     = "60000"
-	TypeGenerated           = "generated"
-	TypeGeneratedError      = "generated_error"
-	TypeValidated           = "validated"
-	TypeValidatedError      = "validated_error"
+	TypeGenerated      = "generated"
+	TypeGeneratedError = "generated_error"
+	TypeValid          = "valid"
+	TypeInvalid        = "invalid"
+	TypeValidatedError = "validated_error"
 )

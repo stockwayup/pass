@@ -2,26 +2,23 @@ package service
 
 import (
 	"context"
-
-	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/nats-io/nats.go"
 	"github.com/rs/zerolog"
-	pubsub "github.com/soulgarden/rmq-pubsub"
 	"github.com/stockwayup/pass/dictionary"
-	"github.com/stockwayup/pass/storage/rmq/event"
+	"github.com/stockwayup/pass/transport/event"
 )
 
 type Generator struct {
 	passwordSvc *Password
-	pub         pubsub.Pub
 }
 
-func NewGenerator(passwordSvc *Password, pub pubsub.Pub) *Generator {
-	return &Generator{passwordSvc: passwordSvc, pub: pub}
+func NewGenerator(passwordSvc *Password) *Generator {
+	return &Generator{passwordSvc: passwordSvc}
 }
 
 func (s *Generator) Process(
 	ctx context.Context,
-	delivery <-chan amqp.Delivery,
+	delivery <-chan *nats.Msg,
 ) error {
 	for {
 		select {
@@ -30,20 +27,24 @@ func (s *Generator) Process(
 				return dictionary.ErrDeliveryChannelClosed
 			}
 
-			ctx := zerolog.Ctx(ctx).With().
-				Str("id", msg.MessageId).
-				Logger().
-				WithContext(context.WithValue(ctx, dictionary.ID, msg.MessageId))
+			msgID := msg.Header.Get("id")
 
-			zerolog.Ctx(ctx).Err(msg.Ack(false)).Str("id", msg.MessageId).Msg("ack")
+			ctx := zerolog.Ctx(ctx).With().
+				Str("id", msgID).
+				Logger().
+				WithContext(context.WithValue(ctx, dictionary.ID, msgID))
 
 			in := event.Generate{}
 
-			_, err := in.UnmarshalMsg(msg.Body)
+			_, err := in.UnmarshalMsg(msg.Data)
 			if err != nil {
 				zerolog.Ctx(ctx).Err(err).Msg("unmarshal msg")
 
-				s.pub.Publish(event.NewAMQPGeneratedMsg(msg.MessageId, dictionary.TypeGeneratedError, []byte{}))
+				if err := msg.Respond([]byte(dictionary.TypeGeneratedError)); err != nil {
+					zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
+
+					return err
+				}
 
 				return err
 			}
@@ -52,9 +53,11 @@ func (s *Generator) Process(
 			if err != nil {
 				zerolog.Ctx(ctx).Err(err).Msg("hash password")
 
-				s.pub.Publish(event.NewAMQPGeneratedMsg(msg.MessageId, dictionary.TypeGeneratedError, []byte{}))
+				if err := msg.Respond([]byte(dictionary.TypeGeneratedError)); err != nil {
+					zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
-				return err
+					return err
+				}
 			}
 
 			out := event.Generated{Hash: hash, Salt: salt}
@@ -63,12 +66,24 @@ func (s *Generator) Process(
 			if err != nil {
 				zerolog.Ctx(ctx).Err(err).Msg("marshal msg")
 
-				s.pub.Publish(event.NewAMQPGeneratedMsg(msg.MessageId, dictionary.TypeGeneratedError, []byte{}))
+				if err := msg.Respond([]byte(dictionary.TypeGeneratedError)); err != nil {
+					zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
+
+					return err
+				}
+			}
+
+			reply := nats.NewMsg("")
+
+			reply.Header.Set("id", msgID)
+			reply.Header.Set("type", dictionary.TypeGenerated)
+			reply.Data = body
+
+			if err := msg.RespondMsg(reply); err != nil {
+				zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 				return err
 			}
-
-			s.pub.Publish(event.NewAMQPGeneratedMsg(msg.MessageId, dictionary.TypeGenerated, body))
 
 		case <-ctx.Done():
 			return ctx.Err()

@@ -3,8 +3,6 @@ package conf
 import (
 	"os"
 
-	pubsub "github.com/soulgarden/rmq-pubsub"
-
 	"github.com/jinzhu/configor"
 	"github.com/rs/zerolog/log"
 )
@@ -13,19 +11,13 @@ type Config struct {
 	Env       string `json:"env" required:"true"`
 	DB        *DB
 	DebugMode bool `default:"false" json:"debug_mode"`
-	RMQ       struct {
-		Host     string `json:"host"     required:"true"`
-		Port     string `default:"6379"  json:"port"`
-		User     string `default:"guest" json:"user"`
-		Password string `default:"guest" json:"password"`
-
+	Nats      struct {
+		Host   string `json:"host"     required:"true"`
 		Queues struct {
-			GenerateIn  *pubsub.Cfg `json:"generate_in"`
-			GenerateOut *pubsub.Cfg `json:"generate_out"`
-			ValidateIn  *pubsub.Cfg `json:"validate_in"`
-			ValidateOut *pubsub.Cfg `json:"validate_out"`
+			Validation string `json:"validation" default:"validation"`
+			Generation string `json:"generation" default:"generation"`
 		} `json:"queues"`
-	} `json:"rmq"`
+	} `json:"nats"`
 	Password struct {
 		Time    uint32 `default:"1"     json:"time"`
 		Memory  uint32 `default:"65536" json:"memory"`
