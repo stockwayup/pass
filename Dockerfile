@@ -1,4 +1,4 @@
-FROM golang:1.23.2-alpine3.20 as builder
+FROM golang:1.23.4-alpine3.20 as builder
 
 ENV GOPATH=/go
 
@@ -11,7 +11,7 @@ RUN go get -u -t github.com/tinylib/msgp && \
     go generate ./... && \
     go build -o /bin/stockwayup
 
-FROM alpine:3.20
+FROM alpine:3.21
 
 RUN adduser -S www-data -G www-data
 
