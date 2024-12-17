@@ -14,8 +14,8 @@ type Config struct {
 	Nats      struct {
 		Host   string `json:"host"     required:"true"`
 		Queues struct {
-			Validation string `json:"validation" default:"validation"`
-			Generation string `json:"generation" default:"generation"`
+			Validation string `json:"validation" default:"pass.validation"`
+			Generation string `json:"generation" default:"pass.generation"`
 		} `json:"queues"`
 	} `json:"nats"`
 	Password struct {

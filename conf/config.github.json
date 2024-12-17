@@ -10,8 +10,6 @@
   "nats": {
     "host": "127.0.0.1",
     "queues": {
-      "validation": "validation",
-      "generation": "generation"
     }
   }
 }

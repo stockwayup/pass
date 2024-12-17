@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"context"
+	"errors"
+	"os"
+
 	"github.com/nats-io/nats.go"
 	"github.com/stockwayup/pass/transport"
-	"os"
 
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
@@ -19,7 +22,7 @@ func NewGenerateConsumerCMD() *cobra.Command {
 		Use:   "generate_consume",
 		Short: "Run generate consumer",
 		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			cfg := conf.New()
 
 			logger := zerolog.New(os.Stdout).With().Caller().Logger()
@@ -64,7 +67,14 @@ func NewGenerateConsumerCMD() *cobra.Command {
 				return err
 			})
 
-			logger.Err(g.Wait()).Msg("wait goroutines")
+			err = g.Wait()
+			if err == nil || errors.Is(context.Canceled, err) {
+				return nil
+			}
+
+			logger.Err(err).Msg("wait goroutines")
+
+			return err
 		},
 	}
 }
