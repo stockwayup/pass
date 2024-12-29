@@ -22,7 +22,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23.2
+          go-version: 1.23.4
           cache: false
 
       - name: Generate
@@ -39,25 +39,17 @@ jobs:
           skip-pkg-cache: true
           skip-build-cache: true
           working-directory: .
-          version: v1.56.2
+          version: v1.62.2
   tests:
     runs-on: ubuntu-latest
 
-    services:
-      rabbitmq:
-        image: rabbitmq:3.10.5-alpine
-        env:
-          RABBITMQ_DEFAULT_USER: "user"
-          RABBITMQ_DEFAULT_PASS: "pass"
-        ports:
-          - 5672:5672
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23.2
+          go-version: 1.23.4
           cache: false
 
       - name: Generate
@@ -93,7 +85,7 @@ jobs:
           context: .
           file: Dockerfile
           push: false
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.10
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.12
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest
 
       - name: Build and push
@@ -103,6 +95,6 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.10
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.12
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest,mode=max

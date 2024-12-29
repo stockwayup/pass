@@ -6,6 +6,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stockwayup/pass/cmd"
+	_ "github.com/tinylib/msgp/msgp"
 	_ "go.uber.org/automaxprocs"
 )
 

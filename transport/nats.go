@@ -1,9 +1,10 @@
 package transport
 
 import (
+	"time"
+
 	"github.com/nats-io/nats.go"
 	"github.com/stockwayup/pass/conf"
-	"time"
 )
 
 func NewConnection(cfg *conf.Config, name string) (*nats.Conn, error) {

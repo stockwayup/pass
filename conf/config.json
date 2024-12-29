@@ -10,8 +10,6 @@
   "nats": {
     "host": "nats.backend.orb.local",
     "queues": {
-      "validation": "validation",
-      "generation": "generation"
     }
   }
 }
