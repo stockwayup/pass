@@ -59,7 +59,7 @@ func NewValidateConsumerCMD() *cobra.Command {
 				os.Exit(1)
 			}
 
-			defer sub.Unsubscribe()
+			defer func() { _ = sub.Unsubscribe() }()
 
 			g.Go(func() error {
 				err := service.NewValidator(service.NewPasswordSvc(cfg)).Process(ctx, mch)
@@ -70,7 +70,7 @@ func NewValidateConsumerCMD() *cobra.Command {
 			})
 
 			err = g.Wait()
-			if err == nil || errors.Is(context.Canceled, err) {
+			if err == nil || errors.Is(err, context.Canceled) {
 				return nil
 			}
 

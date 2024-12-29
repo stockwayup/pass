@@ -57,7 +57,7 @@ func NewGenerateConsumerCMD() *cobra.Command {
 				os.Exit(1)
 			}
 
-			defer sub.Unsubscribe()
+			defer func() { _ = sub.Unsubscribe() }()
 
 			g.Go(func() error {
 				err := service.NewGenerator(service.NewPasswordSvc(cfg)).Process(ctx, mch)
@@ -68,7 +68,7 @@ func NewGenerateConsumerCMD() *cobra.Command {
 			})
 
 			err = g.Wait()
-			if err == nil || errors.Is(context.Canceled, err) {
+			if err == nil || errors.Is(err, context.Canceled) {
 				return nil
 			}
 
