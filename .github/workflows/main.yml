@@ -36,8 +36,6 @@ jobs:
         with:
           only-new-issues: true
           skip-cache: true
-          skip-pkg-cache: true
-          skip-build-cache: true
           working-directory: .
           version: v2.4.0
   tests:
