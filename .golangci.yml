@@ -1,10 +1,25 @@
+version: 2
+
+run:
+  timeout: 5m
+  modules-download-mode: vendor
+  skip-files:
+    - "transport/event/.*_gen_test\\.go$"
+
+linters:
+  enable-all: true
+
 issues:
   exclude-rules:
     - path: _test\.go
       linters:
         - funlen
         - dupl
-    - path: /
+    - path: ^transport/event/.*_gen_test\.go$
+      linters:
+        - errcheck
+      text: "Error return value of .* is not checked"
+    - path: .*
       linters:
         - gci
         - gofumpt
@@ -17,5 +32,3 @@ issues:
         - nonamedreturns
         - funlen
         - depguard
-  enable-all: true
-

@@ -21,6 +21,9 @@ func (s Validator) Process(
 	ctx context.Context,
 	delivery <-chan *nats.Msg,
 ) error {
+	zerolog.Ctx(ctx).Info().Msg("consumer started")
+	defer zerolog.Ctx(ctx).Info().Msg("consumer stopped")
+
 	for {
 		select {
 		case msg, ok := <-delivery:
@@ -72,6 +75,9 @@ func (s Validator) run(ctx context.Context, msg *nats.Msg) error {
 
 			return err
 		}
+
+		// non-critical: reply sent, continue processing next messages
+		return nil
 	}
 
 	resp := dictionary.TypeValid
@@ -82,6 +88,7 @@ func (s Validator) run(ctx context.Context, msg *nats.Msg) error {
 	reply := nats.NewMsg("")
 
 	reply.Header.Set("id", msgID)
+	reply.Header.Set("type", resp)
 	reply.Data = []byte(resp)
 
 	if err := msg.RespondMsg(reply); err != nil {
