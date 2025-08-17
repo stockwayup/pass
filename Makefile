@@ -23,5 +23,4 @@ docker-build:
 docker-push:
 	docker push $(IMAGE)
 
-# keep backward-compatible target that only builds (no push)
 build: docker-build docker-push
