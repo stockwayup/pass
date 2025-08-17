@@ -14,6 +14,14 @@ test:
 	go clean -testcache
 	CONFIGOR_ENV=local ROOT_DIR=${PWD} go test -failfast ./...
 
-build:
-	docker build . -t soulgarden/swup:pass-0.0.12 --platform linux/amd64
-	docker push soulgarden/swup:pass-0.0.12
+IMAGE ?= soulgarden/swup:pass-0.0.13
+PLATFORM ?= linux/amd64
+
+docker-build:
+	docker build . -t $(IMAGE) --platform $(PLATFORM)
+
+docker-push:
+	docker push $(IMAGE)
+
+# keep backward-compatible target that only builds (no push)
+build: docker-build docker-push

@@ -1,6 +1,6 @@
 module github.com/stockwayup/pass
 
-go 1.23.4
+go 1.25.0
 
 require (
 	github.com/jinzhu/configor v1.2.2

@@ -57,7 +57,7 @@ func (s Validator) run(ctx context.Context, msg *nats.Msg) error {
 	if _, err := in.UnmarshalMsg(msg.Data); err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("unmarshal msg")
 
-		if err := msg.Respond([]byte(dictionary.TypeValidatedError)); err != nil {
+		if err := respond(msg, []byte(dictionary.TypeValidatedError)); err != nil {
 			zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 			return err
@@ -70,7 +70,7 @@ func (s Validator) run(ctx context.Context, msg *nats.Msg) error {
 	if err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("is valid")
 
-		if err := msg.Respond([]byte(dictionary.TypeValidatedError)); err != nil {
+		if err := respond(msg, []byte(dictionary.TypeValidatedError)); err != nil {
 			zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 			return err
@@ -86,12 +86,15 @@ func (s Validator) run(ctx context.Context, msg *nats.Msg) error {
 	}
 
 	reply := nats.NewMsg("")
+	if reply.Header == nil {
+		reply.Header = nats.Header{}
+	}
 
 	reply.Header.Set("id", msgID)
 	reply.Header.Set("type", resp)
 	reply.Data = []byte(resp)
 
-	if err := msg.RespondMsg(reply); err != nil {
+	if err := respondMsg(msg, reply); err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 		return err

@@ -22,7 +22,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23.4
+          go-version: 1.25.0
           cache: false
 
       - name: Generate
@@ -39,7 +39,7 @@ jobs:
           skip-pkg-cache: true
           skip-build-cache: true
           working-directory: .
-          version: v1.62.2
+          version: v2.4.0
   tests:
     runs-on: ubuntu-latest
 
@@ -49,7 +49,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23.4
+          go-version: 1.25.0
           cache: false
 
       - name: Generate
@@ -85,7 +85,7 @@ jobs:
           context: .
           file: Dockerfile
           push: false
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.12
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.13
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest
 
       - name: Build and push
@@ -95,6 +95,6 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.12
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-0.0.13
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/swup:pass-latest,mode=max

@@ -58,7 +58,7 @@ func (s Generator) run(ctx context.Context, msg *nats.Msg) error {
 	if err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("unmarshal msg")
 
-		if err := msg.Respond([]byte(dictionary.TypeGeneratedError)); err != nil {
+		if err := respond(msg, []byte(dictionary.TypeGeneratedError)); err != nil {
 			zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 			return err
@@ -72,7 +72,7 @@ func (s Generator) run(ctx context.Context, msg *nats.Msg) error {
 	if err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("hash password")
 
-		if err := msg.Respond([]byte(dictionary.TypeGeneratedError)); err != nil {
+		if err := respond(msg, []byte(dictionary.TypeGeneratedError)); err != nil {
 			zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 			return err
@@ -87,7 +87,7 @@ func (s Generator) run(ctx context.Context, msg *nats.Msg) error {
 	if err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("marshal msg")
 
-		if err := msg.Respond([]byte(dictionary.TypeGeneratedError)); err != nil {
+		if err := respond(msg, []byte(dictionary.TypeGeneratedError)); err != nil {
 			zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 			return err
@@ -98,12 +98,15 @@ func (s Generator) run(ctx context.Context, msg *nats.Msg) error {
 	}
 
 	reply := nats.NewMsg("")
+	if reply.Header == nil {
+		reply.Header = nats.Header{}
+	}
 
 	reply.Header.Set("id", msgID)
 	reply.Header.Set("type", dictionary.TypeGenerated)
 	reply.Data = body
 
-	if err := msg.RespondMsg(reply); err != nil {
+	if err := respondMsg(msg, reply); err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 		return err

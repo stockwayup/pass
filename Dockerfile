@@ -1,13 +1,12 @@
-FROM golang:1.23.4-alpine3.21 AS builder
+FROM golang:1.25.0-alpine3.21 AS builder
 
 ENV GOPATH=/go
-ENV GOFLAGS=-mod=vendor
 
 COPY . $GOPATH/src/github.com/stockwayup/pass
 
 WORKDIR $GOPATH/src/github.com/stockwayup/pass
 
-RUN go install github.com/tinylib/msgp@v1.3.0 && \
+RUN GOFLAGS= go install github.com/tinylib/msgp@v1.3.0 && \
     go generate ./... && \
     CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /bin/stockwayup
 
