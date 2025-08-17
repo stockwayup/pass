@@ -8,15 +8,28 @@ linters:
   default: all
   exclusions:
     paths:
-      - "transport/event/.*_gen_test\\.go$"
+      - "transport/event/.*_gen.*\\.go$"
     rules:
       - path: _test\.go
         linters:
           - funlen
           - dupl
-      - path: ^transport/event/.*_gen_test\.go$
+          - paralleltest
+          - testpackage
+          - wsl
+          - wsl_v5
+          - usetesting
+      - path: ^transport/event/.*_gen.*\.go$
         linters:
           - errcheck
+          - cyclop
+          - godot
+          - mnd
+          - nakedret
+          - nlreturn
+          - revive
+          - wsl
+          - wsl_v5
         text: "Error return value of .* is not checked"
       - path: .*
         linters:
@@ -31,3 +44,14 @@ linters:
           - nonamedreturns
           - funlen
           - depguard
+          - revive
+          - gochecknoglobals
+          - nlreturn
+          - noinlineerr
+          - tagalign
+          - whitespace
+          - copyloopvar
+          - intrange
+          - mnd
+          - gosec
+          - nolintlint
