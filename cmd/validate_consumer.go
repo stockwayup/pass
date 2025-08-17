@@ -41,7 +41,7 @@ func NewValidateConsumerCMD() *cobra.Command {
 
 			g, ctx := errgroup.WithContext(ctx)
 
-			const serviceName = "pass.generate"
+			const serviceName = "pass.validate"
 
 			natsConn, err := transport.NewConnection(cfg, serviceName)
 			if err != nil {

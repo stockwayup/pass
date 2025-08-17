@@ -21,6 +21,9 @@ func (s Generator) Process(
 	ctx context.Context,
 	delivery <-chan *nats.Msg,
 ) error {
+	zerolog.Ctx(ctx).Info().Msg("consumer started")
+	defer zerolog.Ctx(ctx).Info().Msg("consumer stopped")
+
 	for {
 		select {
 		case msg, ok := <-delivery:
@@ -55,20 +58,21 @@ func (s Generator) run(ctx context.Context, msg *nats.Msg) error {
 	if err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("unmarshal msg")
 
-		if err := msg.Respond([]byte(dictionary.TypeGeneratedError)); err != nil {
+		if err := respond(msg, []byte(dictionary.TypeGeneratedError)); err != nil {
 			zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 			return err
 		}
 
-		return err
+		// non-critical: reply sent, continue processing next messages
+		return nil
 	}
 
 	hash, salt, err := s.passwordSvc.HashPassword(ctx, in.Password)
 	if err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("hash password")
 
-		if err := msg.Respond([]byte(dictionary.TypeGeneratedError)); err != nil {
+		if err := respond(msg, []byte(dictionary.TypeGeneratedError)); err != nil {
 			zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 			return err
@@ -83,20 +87,26 @@ func (s Generator) run(ctx context.Context, msg *nats.Msg) error {
 	if err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("marshal msg")
 
-		if err := msg.Respond([]byte(dictionary.TypeGeneratedError)); err != nil {
+		if err := respond(msg, []byte(dictionary.TypeGeneratedError)); err != nil {
 			zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 			return err
 		}
+
+		// non-critical: reply sent, continue processing next messages
+		return nil
 	}
 
 	reply := nats.NewMsg("")
+	if reply.Header == nil {
+		reply.Header = nats.Header{}
+	}
 
 	reply.Header.Set("id", msgID)
 	reply.Header.Set("type", dictionary.TypeGenerated)
 	reply.Data = body
 
-	if err := msg.RespondMsg(reply); err != nil {
+	if err := respondMsg(msg, reply); err != nil {
 		zerolog.Ctx(ctx).Err(err).Msg("nats queue respond")
 
 		return err

@@ -1,21 +1,56 @@
-issues:
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - funlen
-        - dupl
-    - path: /
-      linters:
-        - gci
-        - gofumpt
-        - exhaustivestruct
-        - exhaustruct
-        - wrapcheck
-        - tagliatelle
-        - dupl
-        - varnamelen
-        - nonamedreturns
-        - funlen
-        - depguard
-  enable-all: true
+version: "2"
 
+run:
+  timeout: 5m
+
+linters:
+  default: all
+  exclusions:
+    paths:
+      - "transport/event/.*_gen.*\\.go$"
+    rules:
+      - path: _test\.go
+        linters:
+          - funlen
+          - dupl
+          - paralleltest
+          - testpackage
+          - wsl
+          - wsl_v5
+          - usetesting
+      - path: ^transport/event/.*_gen.*\.go$
+        linters:
+          - errcheck
+          - cyclop
+          - godot
+          - mnd
+          - nakedret
+          - nlreturn
+          - revive
+          - wsl
+          - wsl_v5
+        text: "Error return value of .* is not checked"
+      - path: .*
+        linters:
+          - gci
+          - gofumpt
+          - exhaustivestruct
+          - exhaustruct
+          - wrapcheck
+          - tagliatelle
+          - dupl
+          - varnamelen
+          - nonamedreturns
+          - funlen
+          - depguard
+          - revive
+          - gochecknoglobals
+          - nlreturn
+          - noinlineerr
+          - tagalign
+          - whitespace
+          - copyloopvar
+          - intrange
+          - mnd
+          - gosec
+          - nolintlint
